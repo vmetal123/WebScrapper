@@ -28,7 +28,7 @@ namespace Api.Utils
 
         ISet<EntryDto> ParseHtmlDocument(IDocument doc)
         {
-            return ParseElements(doc.QuerySelectorAll(".entry-title").ToArray());
+            return ParseElements(doc.QuerySelectorAll(".post_box").ToArray());
         }
 
         ISet<EntryDto> ParseElements(IElement[] elems)
@@ -36,13 +36,17 @@ namespace Api.Utils
             return elems.Aggregate(new HashSet<EntryDto>(), (list, entry) => 
             {
                 var href = entry.QuerySelector("a").GetAttribute("href");
-                var title = entry.QuerySelector("a").TextContent;
+                var title = entry.QuerySelector("a").GetAttribute("title");
                 var guid = Guid.NewGuid();
+                var imageUrl = entry.QuerySelector("img").GetAttribute("src");
+                var previewHistory = entry.QuerySelector(".entry-content p").TextContent;
 
                 var entryDto = new EntryDto() {
                     Id = guid,
                     Title = title,
-                    Link = href
+                    Link = href,
+                    ImageUrl = imageUrl,
+                    PreviewHistory = previewHistory
                 };
 
                 list.Add(entryDto);
